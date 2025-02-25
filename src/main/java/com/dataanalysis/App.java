@@ -20,12 +20,13 @@ public class App {
         CSVReader csvReader = new CSVReader(filePath);
         try {
             List<CSVRecord> records = csvReader.load();
-            Map<String, String> eg = records.get(1).toMap();
-            Iterator<Entry<String, String>> it = eg.entrySet().iterator();
-            while (it.hasNext()) {
-                Entry<String, String> e = it.next();
-                System.out.println(e.getKey() + ", " + e.getValue());
-            }
+            Map<String, List<Object>> allDataMap = csvReader.loadAllColumnData(records);
+            // Iterator<Entry<String, List<Object>>> it = columnMap.entrySet().iterator();
+            // while (it.hasNext()) {
+            //     Entry<String, List<Object>> e = it.next();
+            //     System.out.println(e.getKey());
+            //     System.out.println(e.getValue().size());
+            // }
             System.out.println("total records: " + records.size());
             System.out.println("loaded");
         } catch (Exception e) {

@@ -1,7 +1,10 @@
 package com.dataanalysis.csv;
 
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -30,6 +33,31 @@ public class CSVReader {
         parser.close();
         reader.close();
         return records;
+    }
+
+    /**
+     * Creates a map of column -> list of values, potentially easier to work with.
+     * @param records
+     * @return - map of columnName -> List of values
+     */
+    public Map<String, List<Object>> loadAllColumnData(List<CSVRecord> records) {
+        Map<String, List<Object>> columnMap = new HashMap<>();
+        if (records == null || records.isEmpty()) {
+            return columnMap;
+        }
+        CSVRecord headerRecord = records.get(0);
+
+        for (String header : headerRecord.getParser().getHeaderNames()) {
+            columnMap.put(header, new ArrayList<Object>());
+        }
+
+        for (CSVRecord record : records) {
+            for (String header : record.getParser().getHeaderNames()) {
+                columnMap.get(header).add((Object) record.get(header));
+            }
+        }
+
+        return columnMap;
     }
 
     /**
