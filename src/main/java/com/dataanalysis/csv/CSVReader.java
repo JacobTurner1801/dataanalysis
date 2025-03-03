@@ -37,6 +37,7 @@ public class CSVReader {
 
     /**
      * Creates a map of column -> list of values, potentially easier to work with.
+     * Includes Target Column
      * @param records
      * @return - map of columnName -> List of values
      */

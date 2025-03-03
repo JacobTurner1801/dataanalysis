@@ -1,13 +1,14 @@
 package com.dataanalysis;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.csv.CSVRecord;
 
+import com.dataanalysis.csv.CSVAnalyser;
 import com.dataanalysis.csv.CSVReader;
+import com.dataanalysis.csv.ColumnMetadata;
+import com.dataanalysis.csv.ColumnTypeDetection;
 
 public class App {
     public static void main( String[] args ) {
@@ -20,15 +21,13 @@ public class App {
         CSVReader csvReader = new CSVReader(filePath);
         try {
             List<CSVRecord> records = csvReader.load();
-            Map<String, List<Object>> allDataMap = csvReader.loadAllColumnData(records);
-            // Iterator<Entry<String, List<Object>>> it = columnMap.entrySet().iterator();
-            // while (it.hasNext()) {
-            //     Entry<String, List<Object>> e = it.next();
-            //     System.out.println(e.getKey());
-            //     System.out.println(e.getValue().size());
-            // }
+            Map<String, List<Object>> allDataMap = csvReader.loadAllColumnData(records.subList(1, records.size()));
             System.out.println("total records: " + records.size());
             System.out.println("loaded");
+            ColumnMetadata metadata = ColumnTypeDetection.setMetadataTypes(allDataMap);
+            metadata.showTypes();
+            CSVAnalyser analyser = new CSVAnalyser(targetColumn, allDataMap, metadata);
+            analyser.createFeatureTargetGraphs();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
