@@ -1,10 +1,12 @@
 package com.dataanalysis.graphs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -18,24 +20,45 @@ import com.dataanalysis.csv.ColumnMetadata;
 import com.dataanalysis.csv.ColumnMetadataTypes;
 
 public class FeatureTargetGraphs {
+    private static JPanel panel;
     public static void createGraphs(Map<String, List<Object>> columnData, String target, ColumnMetadata metadata) {
+        JFrame frame = new JFrame("Features vs " + target);
+        panel = new JPanel();
+        frame.getContentPane().add(panel);
+
+        List<ChartPanel> chartPanels = new ArrayList<>();
+
         for (String feature : columnData.keySet()) {
             if (feature.equals(target)) {
                 continue;
             }
+            ChartPanel graphPanel = null;
             if (metadata.getColumnType(feature) == ColumnMetadataTypes.NUMERICAL) {
-                createScatterPlot(columnData, target, feature);
+                graphPanel = createScatterPlot(columnData, target, feature);
             } else if (metadata.getColumnType(feature) == ColumnMetadataTypes.CATEGORICAL) {
-                createBarPlot(columnData, target, feature);
+                graphPanel = createBarPlot(columnData, target, feature);
+            }
+            if (graphPanel != null) {
+                chartPanels.add(graphPanel);
             }
         }
+
+        panel.setLayout(new GridLayout((int) Math.ceil(Math.sqrt(chartPanels.size())), (int) Math.ceil(Math.sqrt(chartPanels.size()))));
+        for (ChartPanel chp : chartPanels) {
+            panel.add(chp);
+        }
+
+        frame.pack();
+        frame.setVisible(true);
+        frame.setSize(1920, 1080);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private static void createScatterPlot(Map<String, List<Object>> columnData, String target, String feature) {
+    private static ChartPanel createScatterPlot(Map<String, List<Object>> columnData, String target, String feature) {
         XYSeries series = createScatterPlotSeries(columnData.get(feature), columnData.get(target), feature, target);
         XYSeriesCollection dataset = new XYSeriesCollection(series);
         JFreeChart chart = ChartFactory.createScatterPlot(feature + " vs " + target, feature, target, dataset, PlotOrientation.VERTICAL, true, true, false);
-        showChart(chart);
+        return new ChartPanel(chart);
     }
 
     private static XYSeries createScatterPlotSeries(List<Object> featureValues, List<Object> targetValues, String feature, String target) {
@@ -53,10 +76,10 @@ public class FeatureTargetGraphs {
         return series;
     }
 
-    private static void createBarPlot(Map<String, List<Object>> columnData, String target, String feature) {
+    private static ChartPanel createBarPlot(Map<String, List<Object>> columnData, String target, String feature) {
         DefaultCategoryDataset dataset = createBarPlotDataset(columnData.get(feature), columnData.get(target), feature, target);
         JFreeChart chart = ChartFactory.createBarChart(feature + " vs " + target, feature, "Average " + target, dataset, PlotOrientation.VERTICAL, true, true, false);
-        showChart(chart);
+        return new ChartPanel(chart);
     }
 
     private static DefaultCategoryDataset createBarPlotDataset(List<Object> featureValues, List<Object> targetValues, String feature, String target) {
@@ -82,13 +105,5 @@ public class FeatureTargetGraphs {
         }
 
         return dataset;
-    }
-
-    private static void showChart(JFreeChart chart) {
-        ChartPanel chartPanel = new ChartPanel(chart);
-        JFrame jFrame = new JFrame("chart");
-        jFrame.getContentPane().add(chartPanel);
-        jFrame.pack();
-        jFrame.setVisible(true);
     }
 }

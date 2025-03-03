@@ -33,7 +33,7 @@ public class ColumnTypeDetection {
             }
         }
 
-        if (uniqueVals.size() == 0 || uniqueVals.size() < 5) {
+        if (uniqueVals.size() == 0 || uniqueVals.size() < 8) {
             return false;
         }
 
@@ -45,6 +45,7 @@ public class ColumnTypeDetection {
             } catch (NumberFormatException e) {
                 System.err.println("NFE in isNumerical");
                 System.err.println("Val: " + val);
+                System.err.println("Parses until then: " + parses);
             }
         }
         return (double) parses / uniqueVals.size() > 0.85;
