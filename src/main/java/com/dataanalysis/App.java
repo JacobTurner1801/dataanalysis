@@ -10,6 +10,7 @@ import com.dataanalysis.csv.CSVReader;
 import com.dataanalysis.csv.ColumnMetadata;
 import com.dataanalysis.csv.ColumnMetadataTypes;
 import com.dataanalysis.csv.ColumnTypeDetection;
+import com.dataanalysis.util.Util;
 
 public class App {
     public static void main( String[] args ) {
@@ -26,14 +27,19 @@ public class App {
             System.out.println("total records: " + records.size());
             System.out.println("loaded");
             ColumnMetadata metadata = ColumnTypeDetection.setMetadataTypes(allDataMap);
-            metadata.showTypes();
+            // metadata.showTypes();
             CSVAnalyser analyser = new CSVAnalyser(targetColumn, allDataMap, metadata);
             analyser.createFeatureTargetGraphs();
             for (String col : allDataMap.keySet()) {
-                if (col.equals(targetColumn) || metadata.getColumnType(col) == ColumnMetadataTypes.CATEGORICAL) {
+                if (col.equals(targetColumn)) {
                     continue;
                 }
-                System.out.println(col + " to price: " + analyser.getCorrelationScores(targetColumn, col));
+                if (metadata.getColumnType(col) == ColumnMetadataTypes.CATEGORICAL) {
+                    Map<String, Double> categoricalCorrelations = analyser.getCategoricalToNumericalCorrelationScores(col);
+                    Util.printOutMapValues(categoricalCorrelations);
+                } else {
+                    System.out.println(col + " to price: " + analyser.getNumericalCorrelationScore(col));
+                }
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());

@@ -21,7 +21,15 @@ public class CSVAnalyser {
         FeatureTargetGraphs.createGraphs(columnsMap, targetCol, columnTypes);
     }
 
-    public double getCorrelationScores(String target, String feature) {
-        return Correlation.correlation(columnsMap.get(target), columnsMap.get(feature));
+    public double getNumericalCorrelationScore(String feature) {
+        // TODO: target column might be categorical, but this isn't taken into account yet
+        if (columnTypes.getColumnType(feature) == ColumnMetadataTypes.NUMERICAL) {
+            return Correlation.correlation(columnsMap.get(targetCol), columnsMap.get(feature));
+        }
+        return 0.0;
+    }
+
+    public Map<String, Double> getCategoricalToNumericalCorrelationScores(String feature) {
+        return Correlation.categoricalCorrelation(columnsMap, targetCol, feature);
     }
 }

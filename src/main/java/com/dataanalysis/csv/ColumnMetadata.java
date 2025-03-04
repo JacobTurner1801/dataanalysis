@@ -5,11 +5,18 @@ import java.util.Map;
 
 public class ColumnMetadata {
     private Map<String, ColumnMetadataTypes> columnTypes = new HashMap<>();
+    private String name;
     public ColumnMetadata() {}
 
     public void setColumnType(String name, ColumnMetadataTypes type) {
         columnTypes.put(name, type);
+        this.name = name;
     }
+
+    public String getName() {
+        return this.name;
+    }
+    
     /**
      * Gets column type
      * @param column name
