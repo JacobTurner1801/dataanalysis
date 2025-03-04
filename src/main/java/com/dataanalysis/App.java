@@ -1,16 +1,7 @@
 package com.dataanalysis;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.csv.CSVRecord;
-
-import com.dataanalysis.csv.CSVAnalyser;
-import com.dataanalysis.csv.CSVReader;
-import com.dataanalysis.csv.ColumnMetadata;
-import com.dataanalysis.csv.ColumnMetadataTypes;
-import com.dataanalysis.csv.ColumnTypeDetection;
-import com.dataanalysis.util.Util;
+import com.dataanalysis.Analyser.DataAnalyser;
+import com.dataanalysis.Presenter.Presenter;
 
 public class App {
     public static void main( String[] args ) {
@@ -20,29 +11,11 @@ public class App {
         String filePath = args[0];
         String targetColumn = args[1];
 
-        CSVReader csvReader = new CSVReader(filePath);
         try {
-            List<CSVRecord> records = csvReader.load();
-            Map<String, List<Object>> allDataMap = csvReader.loadAllColumnData(records.subList(1, records.size()));
-            System.out.println("total records: " + records.size());
-            System.out.println("loaded");
-            ColumnMetadata metadata = ColumnTypeDetection.setMetadataTypes(allDataMap);
-            // metadata.showTypes();
-            CSVAnalyser analyser = new CSVAnalyser(targetColumn, allDataMap, metadata);
-            analyser.createFeatureTargetGraphs();
-            for (String col : allDataMap.keySet()) {
-                if (col.equals(targetColumn)) {
-                    continue;
-                }
-                if (metadata.getColumnType(col) == ColumnMetadataTypes.CATEGORICAL) {
-                    Map<String, Double> categoricalCorrelations = analyser.getCategoricalToNumericalCorrelationScores(col);
-                    Util.printOutMapValues(categoricalCorrelations);
-                } else {
-                    System.out.println(col + " to price: " + analyser.getNumericalCorrelationScore(col));
-                }
-            }
+            DataAnalyser dataAnalyser = new DataAnalyser(filePath, targetColumn);
+            new Presenter(dataAnalyser);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error in main");
             e.printStackTrace();
         }
     }

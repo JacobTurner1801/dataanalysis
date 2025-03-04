@@ -43,7 +43,7 @@ public class Correlation {
     }
 
     public static Map<String, Double> categoricalCorrelation(Map<String, List<Object>> columnData, String target, String feature) {
-        System.out.println("\nCategorical Feature: " + feature);
+        // System.out.println("\nCategorical Feature: " + feature);
         Map<String, Double> finalStatistics = new HashMap<>();
         Map<String, List<Double>> categoryGroups = new HashMap<>();
         List<Object> targetValues = columnData.get(target);

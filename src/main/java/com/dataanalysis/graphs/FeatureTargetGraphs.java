@@ -1,12 +1,10 @@
 package com.dataanalysis.graphs;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.*;
-import java.awt.*;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -20,12 +18,7 @@ import com.dataanalysis.csv.ColumnMetadata;
 import com.dataanalysis.csv.ColumnMetadataTypes;
 
 public class FeatureTargetGraphs {
-    private static JPanel panel;
-    public static void createGraphs(Map<String, List<Object>> columnData, String target, ColumnMetadata metadata) {
-        JFrame frame = new JFrame("Features vs " + target);
-        panel = new JPanel();
-        frame.getContentPane().add(panel);
-
+    public static List<ChartPanel> createGraphsPanel(Map<String, List<Object>> columnData, String target, ColumnMetadata metadata) {
         List<ChartPanel> chartPanels = new ArrayList<>();
 
         for (String feature : columnData.keySet()) {
@@ -38,20 +31,13 @@ public class FeatureTargetGraphs {
             } else if (metadata.getColumnType(feature) == ColumnMetadataTypes.CATEGORICAL) {
                 graphPanel = createBarPlot(columnData, target, feature);
             }
+            graphPanel.setPreferredSize(new Dimension(300, 1080 / columnData.keySet().size()));
             if (graphPanel != null) {
                 chartPanels.add(graphPanel);
             }
         }
 
-        panel.setLayout(new GridLayout((int) Math.ceil(Math.sqrt(chartPanels.size())), (int) Math.ceil(Math.sqrt(chartPanels.size()))));
-        for (ChartPanel chp : chartPanels) {
-            panel.add(chp);
-        }
-
-        frame.pack();
-        frame.setVisible(true);
-        frame.setSize(1920, 1080);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        return chartPanels;
     }
 
     private static ChartPanel createScatterPlot(Map<String, List<Object>> columnData, String target, String feature) {
