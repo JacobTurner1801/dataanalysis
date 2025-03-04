@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dataanalysis.graphs.FeatureTargetGraphs;
+import com.dataanalysis.metrics.Correlation;
 
 public class CSVAnalyser {
     private String targetCol;
@@ -18,5 +19,9 @@ public class CSVAnalyser {
 
     public void createFeatureTargetGraphs() {
         FeatureTargetGraphs.createGraphs(columnsMap, targetCol, columnTypes);
+    }
+
+    public double getCorrelationScores(String target, String feature) {
+        return Correlation.correlation(columnsMap.get(target), columnsMap.get(feature));
     }
 }
