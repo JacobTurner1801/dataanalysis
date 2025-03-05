@@ -1,6 +1,5 @@
 package com.dataanalysis.graphs;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +30,10 @@ public class FeatureTargetGraphs {
             } else if (metadata.getColumnType(feature) == ColumnMetadataTypes.CATEGORICAL) {
                 graphPanel = createBarPlot(columnData, target, feature);
             }
-            graphPanel.setPreferredSize(new Dimension(300, 1080 / columnData.keySet().size()));
             if (graphPanel != null) {
                 chartPanels.add(graphPanel);
             }
         }
-
         return chartPanels;
     }
 

@@ -27,6 +27,9 @@ public class CSVAnalyser {
     public List<Double> getAllNumericalCorrelations() {
         List<Double> correlations = new ArrayList<>();
         for (String col : this.columnsMap.keySet()) {
+            if (col.equals(targetCol)) {
+                continue;
+            }
             // TODO: target column might be categorical, but this isn't taken into account yet
             if (columnTypes.getColumnType(col) == ColumnMetadataTypes.NUMERICAL) {
                 correlations.add(getNumericalCorrelationScore(col));
