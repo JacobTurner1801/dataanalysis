@@ -72,17 +72,17 @@ public class Correlation {
             OneWayAnova anova = new OneWayAnova();
 
             double fValue = anova.anovaFValue(data);
-            finalStatistics.put("f-value", fValue);
+            finalStatistics.put(feature + " f-value", fValue);
             double pValue = anova.anovaPValue(data);
-            finalStatistics.put("p-value", pValue);
+            finalStatistics.put(feature + " p-value", pValue);
 
             double etaSquared = EtaSquared.calculateEtaSquared(data);
-            finalStatistics.put("eta-squared", etaSquared);
+            finalStatistics.put(feature + " eta-squared", etaSquared);
 
             for (String category : categoryGroups.keySet()) {
                 DescriptiveStatistics stats = new DescriptiveStatistics();
                 categoryGroups.get(category).forEach(stats::addValue);
-                finalStatistics.put("mean for " + category, stats.getMean());
+                finalStatistics.put(feature + " mean for " + category, stats.getMean());
             }
         } catch (Exception e) {
             System.err.println("Error during Anova calculation");

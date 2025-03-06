@@ -1,8 +1,6 @@
 package com.dataanalysis.Presenter;
 
 import java.awt.GridLayout;
-import java.awt.TextComponent;
-import java.awt.TextField;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +8,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
-// import javax.swing.JScrollPane;
+import javax.swing.JScrollPane;
 
 import org.jfree.chart.ChartPanel;
 
@@ -36,9 +34,15 @@ public class Presenter {
         // System.out.println(numericalCorrs.size());
         List<Map<String, Double>> categoricalCorrs = this.dataAnalyser.getCategoricalCorrelations();
         // System.out.println(categoricalCorrs.size());
-        mainContent.add(constructNumericalList(numericalCorrs));
-        mainContent.add(constructCategoricalNumericalTextArea(categoricalCorrs));
-        mainContent.setLayout(new GridLayout((int) Math.ceil(Math.sqrt(featureTargetCharts.size())), (int) Math.ceil(Math.sqrt(featureTargetCharts.size()))));
+        JList<Double> numericalList = constructNumericalList(numericalCorrs);
+        JList<String> categoricalList = constructCategoricalNumericalTextArea(categoricalCorrs);
+
+        mainContent.add(numericalList);
+        JScrollPane scrollPane = new JScrollPane(categoricalList);
+        mainContent.add(scrollPane);
+        double dim = Math.ceil(Math.sqrt(featureTargetCharts.size()) + Math.sqrt(categoricalCorrs.size()) + Math.sqrt(numericalCorrs.size()));
+        // edit first param for displaying text properly :)
+        mainContent.setLayout(new GridLayout((int) dim, (int) dim));
 
         // JScrollPane scrollPane = new JScrollPane(mainContent);
         // scrollPane.getVerticalScrollBar().setUnitIncrement(20);
@@ -59,21 +63,20 @@ public class Presenter {
         return new JList<>(model);
     }
 
-    private JList<TextComponent> constructCategoricalNumericalTextArea(List<Map<String, Double>> correlations) {
-        DefaultListModel<TextComponent> model = new DefaultListModel<>();
+    private JList<String> constructCategoricalNumericalTextArea(List<Map<String, Double>> correlations) {
+        DefaultListModel<String> model = new DefaultListModel<>();
         for (Map<String, Double> map : correlations) {
-            TextField ta = createTextArea(map);
-            ta.setEditable(false);
-            model.addElement(ta);
+            String toDisplay = createStringFromCategoricalValues(map);
+            model.addElement(toDisplay);
         }
         return new JList<>(model);
     }
 
-    private TextField createTextArea(Map<String, Double> map) {
-        StringBuilder text = new StringBuilder();
+    private String createStringFromCategoricalValues(Map<String, Double> map) {
+        StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Double> entry : map.entrySet()) {
-            text.append(String.format("%s: %.4f\n", entry.getKey(), entry.getValue()));
+            builder.append(String.format("%s: %.2f; \r", entry.getKey(), entry.getValue()));
         }
-        return new TextField(text.toString());
+        return builder.toString();
     }
 }
